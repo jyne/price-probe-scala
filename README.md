@@ -12,6 +12,8 @@ Price Probe Go is a middleware born to make sensed queries to serve nice and dry
     - `-X DELETE /item/`
  - [ ] Setup ElasticSearch. Take a look at [olivere/elastic](https://github.com/olivere/elastic)
  - [ ] Talke with ElasticSearch
- - [ ] Setup Redis for caching. Most of thins are already done at [Go-Todo-List](https://github.com/AndreaM16/Go-Todo-List)
+ - [ ] Setup Redis for caching. Most of things are already done at [Go-Todo-List](https://github.com/AndreaM16/Go-Todo-List)
  - [ ] Actually store/serve/edit/delete data
         
+## To Check
+ - [ ] Check [go-graphql](https://github.com/graphql-go/graphql) to actually build REST endpoints.
