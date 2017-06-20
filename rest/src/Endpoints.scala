@@ -12,7 +12,7 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import akka.pattern.ask
 
-object endpoints extends HealthJsonSupport {
+object Endpoints extends ItemJsonSupport {
 
   import scala.io.StdIn
 
@@ -33,20 +33,20 @@ object endpoints extends HealthJsonSupport {
 
       implicit val timeout = Timeout(20.seconds)
 
-      path("health") {
+      path("item") {
         get {
-          onSuccess(requestHandler ? GetHealthRequest) {
-            case response: HealthResponse =>
-              complete(response.health) // Complete the route and respond with the Health data
+          onSuccess(requestHandler ? GetItemRequest) {
+            case response: ItemResponse =>
+              complete(response.item)
             case _ =>
               complete(StatusCodes.InternalServerError)
           }
         } ~
           post {
-            entity(as[Health]) { statusReport =>
+            entity(as[Item]) { statusReport =>
               onSuccess(requestHandler ? SetStatusRequest(statusReport)) {
-                case response: HealthResponse =>
-                  complete(response.health) // Complete the route and respond with the Health data
+                case response: ItemResponse =>
+                  complete(response.item)
                 case _ =>
                   complete(StatusCodes.InternalServerError)
               }
