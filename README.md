@@ -18,3 +18,6 @@ Price Probe Scala is a middleware born to make sensed queries to serve nice and 
         
 ## To Check
  - [ ] Check [sangria-graphql](https://github.com/sangria-graphql/sangria) to actually build REST endpoints.
+
+## Swagger Reference
+Available at [swaggerhub.com/price-probe](https://app.swaggerhub.com/apis/UNI/price-probe/1.0.0)
