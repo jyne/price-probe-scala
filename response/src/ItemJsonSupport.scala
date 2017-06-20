@@ -6,5 +6,5 @@ import spray.json._
   */
 
 trait ItemJsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val itemFormat = jsonFormat2(Item)
+  implicit val itemFormat = jsonFormat14(Item)
 }
