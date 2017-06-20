@@ -1,5 +1,5 @@
-# price-probe-go
-Price Probe Go is a middleware born to make sensed queries to serve nice and dry data.
+# price-probe-scala
+Price Probe Scala is a middleware born to make sensed queries to serve nice and dry data.
 
 ## Todos
  - [ ] Build a swagger with [swagger-ui](http://swagger.io/swagger-ui/) containing the REST points of the application
@@ -17,4 +17,4 @@ Price Probe Go is a middleware born to make sensed queries to serve nice and dry
  - [ ] Build solid search queries
         
 ## To Check
- - [ ] Check [go-graphql](https://github.com/graphql-go/graphql) to actually build REST endpoints.
+ - [ ] Check [sangria-graphql](https://github.com/sangria-graphql/sangria) to actually build REST endpoints.
