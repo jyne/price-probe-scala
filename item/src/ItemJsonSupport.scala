@@ -1,3 +1,5 @@
+package item
+
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 

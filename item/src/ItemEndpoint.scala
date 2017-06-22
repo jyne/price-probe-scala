@@ -1,32 +1,17 @@
-/**
-  * Created by andream16 on 20.06.17.
-  */
+package item
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.stream.ActorMaterializer
 import akka.util.Timeout
-
 import scala.concurrent.duration._
+import akka.pattern.ask
+import server.Server
 
+/**
+  * Created by andream16 on 20.06.17.
+  */
 object ItemEndpoint extends ItemJsonSupport {
-
-  import scala.io.StdIn
-
-  val host = "localhost"
-  val port = 8080
-
-  def main(args: Array[String]): Unit = {
-
-    implicit val system = ActorSystem("simple-rest-system")
-    implicit val materializer = ActorMaterializer()
-    implicit val executionContext = system.dispatcher
-
-    val requestHandler = system.actorOf(RequestHandler.props(), "requestHandler")
 
     //Define the route
     val route: Route = {
@@ -35,7 +20,7 @@ object ItemEndpoint extends ItemJsonSupport {
 
       path("item") {
         get {
-          onSuccess(requestHandler ? GetItemRequest) {
+          onSuccess(Server.requestHandler ? GetItemRequest) {
             case response: ItemResponse =>
               complete(response.item)
             case _ =>
@@ -44,7 +29,7 @@ object ItemEndpoint extends ItemJsonSupport {
         } ~
           post {
             entity(as[Item]) { statusReport =>
-              onSuccess(requestHandler ? SetStatusRequest(statusReport)) {
+              onSuccess(Server.requestHandler ? SetStatusRequest(statusReport)) {
                 case response: ItemResponse =>
                   complete(response.item)
                 case _ =>
@@ -55,15 +40,5 @@ object ItemEndpoint extends ItemJsonSupport {
       }
 
     }
-
-    //Startup, and listen for requests
-    val bindingFuture = Http().bindAndHandle(route, host, port)
-    println(s"Waiting for requests at http://$host:$port/...\nHit RETURN to terminate")
-    StdIn.readLine()
-
-    //Shutdown
-    bindingFuture.flatMap(_.unbind())
-    system.terminate()
-  }
 
 }
