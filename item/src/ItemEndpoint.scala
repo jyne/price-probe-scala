@@ -7,12 +7,13 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import scala.concurrent.duration._
-import akka.pattern.ask
 
-object Endpoints extends ItemJsonSupport {
+import scala.concurrent.duration._
+
+object ItemEndpoint extends ItemJsonSupport {
 
   import scala.io.StdIn
 
@@ -24,7 +25,6 @@ object Endpoints extends ItemJsonSupport {
     implicit val system = ActorSystem("simple-rest-system")
     implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher
-
 
     val requestHandler = system.actorOf(RequestHandler.props(), "requestHandler")
 
