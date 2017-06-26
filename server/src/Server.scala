@@ -1,10 +1,12 @@
 package server
 
-import java.io.File
+import java.io.{BufferedReader, File, InputStreamReader}
+import java.util.Properties
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
+import com.jcraft.jsch.{ChannelExec, JSch, Session}
 import com.mongodb.{MongoCredential, ServerAddress}
 import item._
 import com.mongodb.casbah.Imports._
@@ -28,11 +30,14 @@ object Server {
   val config: Config = ConfigFactory.load(fileConfig)
 
   val host: String = getConf("server", "api")
-  val port: Int = Integer.parseInt(getConf("server", "port"))
+  val port: Int = getConf("server", "port").toInt
   val sshUrl: String = getConf("credentials", "ssh-url")
-  val sshPort: String = getConf("credentials", "ssh-port")
+  val sshPort: Int = getConf("credentials", "ssh-port").toInt
+  val mongoPort: Int = getConf("credentials", "mongo-port").toInt
+  val forwardPort: Int = getConf("credentials", "forward-port").toInt
   val sshUserName: String = getConf("credentials", "user-name")
   val sshPassword: String = getConf("credentials", "password")
+  val sshTimeout : Int = getConf("credentials", "timeout").toInt
 
   implicit val system = ActorSystem("simple-rest-system")
   implicit val materializer = ActorMaterializer()
@@ -41,11 +46,27 @@ object Server {
 
   def main(args: Array[String]): Unit = {
 
-    val uri = MongoClientURI("mongodb://" + sshUserName + ":" + sshPassword + "@" + sshUrl + ":" + sshPort + "/")
-    val mongoClient =  MongoClient(uri)
+    val jsch: JSch = new JSch()
+    val session: Session = jsch.getSession(sshUserName, sshUrl, sshPort)
+    session.setPassword(sshPassword)
 
+    val config = new Properties()
+    config.put("StrictHostKeyChecking", "no")
+    session.setConfig(config)
+    session.connect()
+
+    val channel = session.openChannel("exec").asInstanceOf[ChannelExec]
+    val in = new BufferedReader(new InputStreamReader(channel.getInputStream))
+    channel.connect()
+    session.setPortForwardingL(forwardPort, host, mongoPort)
+
+    val uri = new MongoClientURI("mongodb://localhost:8988/")
+    val mongoClient = MongoClient(uri)
     val dbs = mongoClient.getDatabaseNames()
     print(dbs)
+
+    channel.disconnect()
+    session.disconnect()
 
     //Startup, and listen for requests
     val bindingFuture = Http().bindAndHandle(MainRouter.routes, host, port)
