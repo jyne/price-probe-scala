@@ -2,7 +2,7 @@ package server
 
 import java.io.File
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.mongodb.{MongoCredential, ServerAddress}
@@ -10,7 +10,9 @@ import item._
 import com.mongodb.casbah.Imports._
 
 import _root_.scala.io.StdIn
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
+
+import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by andream16 on 22.06.17.
@@ -22,20 +24,20 @@ object MainRouter {
 object Server {
 
   val configFile = new File("./config/application.conf")
-  val fileConfig = ConfigFactory.parseFile(configFile)
-  val config = ConfigFactory.load(fileConfig)
+  val fileConfig: Config = ConfigFactory.parseFile(configFile)
+  val config: Config = ConfigFactory.load(fileConfig)
 
-  val host = getConf("server", "api")
-  val port = Integer.parseInt(getConf("server", "port"))
-  val sshUrl = getConf("credentials", "ssh-url")
-  val sshPort = getConf("credentials", "ssh-port")
-  val sshUserName = getConf("credentials", "user-name")
-  val sshPassword = getConf("credentials", "password")
+  val host: String = getConf("server", "api")
+  val port: Int = Integer.parseInt(getConf("server", "port"))
+  val sshUrl: String = getConf("credentials", "ssh-url")
+  val sshPort: String = getConf("credentials", "ssh-port")
+  val sshUserName: String = getConf("credentials", "user-name")
+  val sshPassword: String = getConf("credentials", "password")
 
   implicit val system = ActorSystem("simple-rest-system")
   implicit val materializer = ActorMaterializer()
-  implicit val executionContext = system.dispatcher
-  val requestHandler = system.actorOf(RequestHandler.props(), "requestHandler")
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  val requestHandler: ActorRef = system.actorOf(RequestHandler.props(), "requestHandler")
 
   def main(args: Array[String]): Unit = {
 
@@ -57,7 +59,7 @@ object Server {
   }
 
   def getConf(group: String, key: String): String = {
-    return config.getString("config." + group + "." + key + ".value")
+    config.getString("config." + group + "." + key + ".value")
   }
 
 }
