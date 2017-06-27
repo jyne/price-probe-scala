@@ -8,9 +8,12 @@ import com.mongodb.casbah.Imports.{MongoClient, MongoClientURI}
 class MongoClientFactory() {
 
   var mongoClient : MongoClient = _
+  val remoteConnectionFactory = new RemoteConnectionFactory
+  val host: String = remoteConnectionFactory.host
+  val forwardPort: Int = remoteConnectionFactory.forwardPort
 
   def initMongoClient(): Unit = {
-    val uri = new MongoClientURI("mongodb://localhost:8988/")
+    val uri = new MongoClientURI("mongodb://" + host + ":" + forwardPort + "/")
     mongoClient = MongoClient(uri)
   }
 
