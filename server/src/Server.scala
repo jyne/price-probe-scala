@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import item._
 import com.mongodb.casbah.Imports._
-import connection.RemoteConnectionFactory
+import connection.{MongoClientFactory, RemoteConnectionFactory}
 
 import _root_.scala.io.StdIn
 import scala.concurrent.ExecutionContextExecutor
@@ -35,10 +35,10 @@ object Server {
     val connectionPool = remoteConnectionFactory.getRemoteConnection
 
     //Connect to local MongoDB
-    val uri = new MongoClientURI("mongodb://localhost:8988/")
-    val mongoClient = MongoClient(uri)
-    val dbs = mongoClient.getDatabaseNames()
-    println(dbs)
+    val mongoClientConnection = new MongoClientFactory()
+    mongoClientConnection.initMongoClient()
+    val mongoClient = mongoClientConnection.getMongoClientInstance
+    mongoClientConnection.disconnectMongoClient()
 
     remoteConnectionFactory.disconnectFromRemoteConnection()
 
