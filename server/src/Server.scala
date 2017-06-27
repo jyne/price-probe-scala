@@ -5,7 +5,6 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import item._
-import com.mongodb.casbah.Imports._
 import connection.{MongoClientFactory, RemoteConnectionFactory}
 
 import _root_.scala.io.StdIn
