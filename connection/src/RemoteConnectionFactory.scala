@@ -16,10 +16,10 @@ class RemoteConnectionFactory {
   val port: Int = getConf("server", "port").toInt
   val sshUrl: String = getConf("credentials", "ssh-url")
   val sshPort: Int = getConf("credentials", "ssh-port").toInt
-  val mongoPort: Int = getConf("credentials", "mongo-port").toInt
+  val cassandraPort: Int = getConf("credentials", "cassandra-port").toInt
   val forwardPort: Int = getConf("credentials", "forward-port").toInt
   val sshUserName: String = getConf("credentials", "user-name")
-  val sshPassword: String = getConf("credentials", "password")
+  val sshPemPath: String = getConf("credentials", "pem-path")
   val sshTimeout : Int = getConf("credentials", "timeout").toInt
 
   var session : Session = _
@@ -28,17 +28,19 @@ class RemoteConnectionFactory {
   def initRemoteConnection(): Unit = {
     //Connect remotely via SSH
     val jsch: JSch = new JSch()
+    jsch.addIdentity(sshPemPath)
     session = jsch.getSession(sshUserName, sshUrl, sshPort)
-    session.setPassword(sshPassword)
     val config = new Properties()
     config.put("StrictHostKeyChecking", "no")
+    session.setTimeout(sshTimeout)
     session.setConfig(config)
     session.connect()
 
     //Prepare Execution
     channel = session.openChannel("exec").asInstanceOf[ChannelExec]
     channel.connect()
-    session.setPortForwardingL(forwardPort, host, mongoPort)
+    session.setPortForwardingL(forwardPort, host, cassandraPort)
+
 
   }
 
