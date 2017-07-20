@@ -14,7 +14,8 @@ import scala.concurrent.ExecutionContextExecutor
   * Created by andream16 on 22.06.17.
   */
 object MainRouter {
-  val routes: Route = ItemEndpoint.route
+  val itemEndPoint : ItemEndpoint = new ItemEndpoint
+  val routes: Route = itemEndPoint.route
 }
 
 object Server {
@@ -31,7 +32,6 @@ object Server {
     val port = remoteConnectionFactory.port
 
     remoteConnectionFactory.initRemoteConnection()
-    remoteConnectionFactory.disconnectFromRemoteConnection()
 
     //Startup, and listen for requests
     val bindingFuture = Http().bindAndHandle(MainRouter.routes, host, port)

@@ -12,9 +12,9 @@ import priceprobe.server.Server
 /**
   * Created by andream16 on 20.06.17.
   */
-object ItemEndpoint extends ItemJsonSupport {
+class ItemEndpoint extends ItemJsonSupport {
 
-     val itemFactory : ItemFactory = new ItemFactory
+    var res : Item = _
 
     //Define the route
     val route: Route = {
@@ -25,10 +25,10 @@ object ItemEndpoint extends ItemJsonSupport {
         get {
           parameters("key".?, "value".?) {
             (key, value) => (key, value) match {
-              case (Some(k), Some(v))  => itemFactory.getItemById()
-              case (Some(k), _) => println("No Value found")
-              case (_, Some(k)) => println("No Key found")
-              case _ => println("Nil")
+              case (Some(k), Some(v)) => println("Ok")
+              case (Some(k), None) => println("No Value found")
+              case (None, Some(k)) => println("No Key found")
+              case (None, None) => println("Nil")
             }
             onSuccess(Server.requestHandler ? GetItemRequest) {
              case response: ItemResponse =>

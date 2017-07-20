@@ -16,9 +16,13 @@ class ItemFactory {
   sparkConnectionFactory.initSparkConnection()
   val sc : SparkContext = sparkConnectionFactory.getSparkInstance
 
-  def getItemById() {
-    val rdd = sc.cassandraTable("price_probe", "pricest")
-    rdd.foreach(println)
+  def getItemById : Item = {
+    val rdd = sc.cassandraTable("price_probe", "itemst")
+    val r = rdd.map(row => Item(row.getString("item"), row.getString("pid"), row.getString("img"), row.getString("description"),
+                               row.getString("title"), row.getString("category"), row.getString("url"))
+    )
+    val item = r.filter( i => i.id == "561667d23574e5fb1a8063a3")
+    item.first()
   }
 
 }

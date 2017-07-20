@@ -18,17 +18,24 @@ case class ItemResponse(item: Item)
 
 class RequestHandler extends Actor with ActorLogging {
 
-  var status: Item = Item( "594650e56cc12a1735c4781f", "B0116DLZ4E", "Borgonovo Taza Ischia Espresso Saucer 12cm - Set of 6 - Saucers for Italian Espresso Coffee Cups", "desc",
-  "3149388031L", "http://www.amazon.co.uk/gp/product/B0116DLZ4E", "https://images-eu.ssl-images-amazon.com/images/I/318b5gf6qHL._AC_US160_.jpg")
+  var r : Item = _
+
+  var itemFactory : ItemFactory = new ItemFactory
 
   def receive: Receive = {
 
     case GetItemRequest =>
-      log.debug("Received GetHealthRequest")
-      sender() !  ItemResponse(status)
+      r = itemFactory.getItemById
+      sender() !  ItemResponse(r)
     case request: SetStatusRequest =>
       log.debug("Updating Status to {}",request.item)
-      status = request.item
-      sender() ! ItemResponse(status)
+      r = request.item
+      sender() ! ItemResponse(r)
   }
+
+  @Override
+  def toString(item : Item): String ={
+    item.id + " " + item.title + " " + item.pid + " " + item.category + " " + item.description + " " + item.url + " " + item.img
+  }
+
 }
