@@ -1,16 +1,20 @@
-package connection
+package priceprobe.connection
 
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * Created by andream16 on 18.07.17.
   */
-class SparkCassandraConnectionFactory {
+object SparkConnectionFactory {
+  val getSparkInstance : SparkContext = getSparkInstance
+}
+
+class SparkConnectionFactory {
 
   val remoteFactory = new RemoteConnectionFactory
   var sparkContext : SparkContext = _
 
-  def initSparkCassandraConnection = {
+  def initSparkConnection() : Unit = {
     val configuration = new SparkConf(true).setMaster("local[8]")
                         .setAppName("price-probe")
                         .set("spark.cassandra.connection.host", remoteFactory.host)
@@ -21,7 +25,7 @@ class SparkCassandraConnectionFactory {
     sparkContext = sc
   }
 
-  def getSparkCassandraInstance : SparkContext = {
+  def getSparkInstance : SparkContext = {
     sparkContext
   }
 

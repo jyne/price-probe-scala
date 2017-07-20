@@ -1,4 +1,4 @@
-package connection
+package priceprobe.connection
 
 import java.io.File
 import java.util.Properties
@@ -40,7 +40,6 @@ class RemoteConnectionFactory {
     channel = session.openChannel("exec").asInstanceOf[ChannelExec]
     channel.connect()
     session.setPortForwardingL(forwardPort, host, cassandraPort)
-
 
   }
 

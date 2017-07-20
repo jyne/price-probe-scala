@@ -1,4 +1,4 @@
-package item
+package priceprobe.item
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
@@ -7,5 +7,5 @@ import spray.json._
   * Created by andream16 on 20.06.17.
   */
 trait ItemJsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val itemFormat = jsonFormat14(Item)
+  implicit val itemFormat = jsonFormat7(Item)
 }
