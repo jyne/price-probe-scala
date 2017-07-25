@@ -28,13 +28,13 @@ class ItemEndpoint extends ItemJsonSupport {
           parameters("key".?, "value".?, "size".?, "page".?) {
             (key, value, size, page) => (key, value, size, page) match {
               case (Some(k), Some(v), _, _) => (k, v) match {
-                case ("pid", _) => onSuccess(Server.requestHandler ? GetItemByPidRequest) {
+                case ("pid", _) => onSuccess(Server.requestHandler ? GetItemByPidRequest(v)) {
                   case response: ItemResponse =>
                     complete(response.item)
                   case _ =>
                     complete(StatusCodes.InternalServerError)
                 }
-                case ("url", _) => onSuccess(Server.requestHandler ? GetItemByUrlRequest) {
+                case ("url", _) => onSuccess(Server.requestHandler ? GetItemByUrlRequest(v)) {
                   case response: ItemResponse =>
                     complete(response.item)
                   case _ =>
@@ -43,13 +43,13 @@ class ItemEndpoint extends ItemJsonSupport {
                 case (_, _) => complete(StatusCodes.InternalServerError)
               }
               case (Some(k), Some(v), Some(s), Some(p)) => (k, v, s, p) match {
-                case ("title", _, _, _) => onSuccess(Server.requestHandler ? GetItemByTitleRequest) {
+                case ("title", _, _, _) => onSuccess(Server.requestHandler ? GetItemByTitleRequest(v, s.toInt, k.toInt)) {
                   case response: ItemResponse =>
                     complete(response.item)
                   case _ =>
                     complete(StatusCodes.InternalServerError)
                 }
-                case (_, _, _, _) => onSuccess(Server.requestHandler ? GetItemsRequest) {
+                case (_, _, _, _) => onSuccess(Server.requestHandler ? GetItemsRequest(s.toInt, k.toInt)) {
                   case response: ItemResponse =>
                     complete(response.item)
                   case _ =>

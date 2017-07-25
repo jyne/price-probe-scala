@@ -1,5 +1,6 @@
 package priceprobe.connection
 
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -12,7 +13,7 @@ object SparkConnectionFactory {
 class SparkConnectionFactory {
 
   val remoteFactory = new RemoteConnectionFactory
-  var sparkContext : SparkContext = _
+  var sparkContext : SparkSession = _
 
   def initSparkConnection() : Unit = {
     val configuration = new SparkConf(true).setMaster("local[8]")
@@ -21,11 +22,17 @@ class SparkConnectionFactory {
                         .set("spark.cassandra.connection.port", remoteFactory.forwardPort.toString)
                         .set("spark.cassandra.input.consistency.level","ONE")
                         .set("spark.driver.allowMultipleContexts", "true")
-    val sc = new SparkContext(configuration)
-    sparkContext = sc
+    val sparkSession = SparkSession
+      .builder()
+      .appName("SparkSessionZipsExample")
+      .config(configuration)
+      .enableHiveSupport()
+      .getOrCreate()
+
+    sparkContext = sparkSession
   }
 
-  def getSparkInstance : SparkContext = {
+  def getSparkInstance : SparkSession = {
     sparkContext
   }
 

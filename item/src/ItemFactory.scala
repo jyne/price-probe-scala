@@ -1,8 +1,7 @@
 package priceprobe.item
 
-import org.apache.spark.SparkContext
 import priceprobe.connection.SparkConnectionFactory
-import com.datastax.spark.connector._
+import org.apache.spark.sql.SparkSession
 
 /**
   * Created by andream16 on 20.07.17.
@@ -14,42 +13,44 @@ class ItemFactory {
 
   val sparkConnectionFactory = new SparkConnectionFactory
   sparkConnectionFactory.initSparkConnection()
-  val sc : SparkContext = sparkConnectionFactory.getSparkInstance
+  val sc : SparkSession = sparkConnectionFactory.getSparkInstance
+  val createDDL = """CREATE TEMPORARY VIEW price_probe
+     USING org.apache.spark.sql.cassandra
+     OPTIONS (
+     table "itemst",
+     keyspace "price_probe",
+     pushdown "true")"""
+  sc.sql(createDDL)
+  import sc.implicits._
 
-  def getItems : Item = {
-    val rdd = sc.cassandraTable("price_probe", "itemst")
-    val r = rdd.map(row => Item(row.getString("item"), row.getString("pid"), row.getString("img"), row.getString("description"),
-      row.getString("title"), row.getString("category"), row.getString("url"))
-    )
-    val item = r.filter( i => i.id == "561667d23574e5fb1a8063a3")
-    item.first()
+  def getItems(size: Integer, page: Integer) : Item = {
+    val query = sc.sql("SELECT * FROM price_probe WHERE url=" + size + ";").collect()
+    val item = query.map(row => Item(row.getAs[String]("item"), row.getAs[String]("pid"), row.getAs[String]("img"), row.getAs[String]("description"),
+      row.getAs[String]("title"), row.getAs[String]("category"), row.getAs[String]("url")
+    ))
+    item(0)
   }
 
-  def getItemByPid : Item = {
-    val rdd = sc.cassandraTable("price_probe", "itemst")
-    val r = rdd.map(row => Item(row.getString("item"), row.getString("pid"), row.getString("img"), row.getString("description"),
-    row.getString("title"), row.getString("category"), row.getString("url"))
-    )
-    val item = r.filter( i => i.id == "561667d23574e5fb1a8063a3")
-    item.first()
+  def getItemByPid(pid : String) : Item = {
+    val query = sc.sql("SELECT * FROM price_probe WHERE pid=\"" + pid + "\"")
+    query.map(row => Item(row.getAs[String]("item"), row.getAs[String]("pid"), row.getAs[String]("img"), row.getAs[String]("description"),
+      row.getAs[String]("title"), row.getAs[String]("category"), row.getAs[String]("url")
+    )).first()
   }
 
-  def getItemByUrl : Item = {
-    val rdd = sc.cassandraTable("price_probe", "itemst")
-    val r = rdd.map(row => Item(row.getString("item"), row.getString("pid"), row.getString("img"), row.getString("description"),
-    row.getString("title"), row.getString("category"), row.getString("url"))
-    )
-    val item = r.filter( i => i.id == "561667d23574e5fb1a8063a3")
-    item.first()
+  def getItemByUrl(url: String) : Item = {
+    val query = sc.sql("SELECT * FROM price_probe WHERE url=\"" + url + "\"")
+    query.map(row => Item(row.getAs[String]("item"), row.getAs[String]("pid"), row.getAs[String]("img"), row.getAs[String]("description"),
+                                     row.getAs[String]("title"), row.getAs[String]("category"), row.getAs[String]("url")
+    )).first()
   }
 
-  def getItemsByTitle : Item = {
-    val rdd = sc.cassandraTable("price_probe", "itemst")
-    val r = rdd.map(row => Item(row.getString("item"), row.getString("pid"), row.getString("img"), row.getString("description"),
-      row.getString("title"), row.getString("category"), row.getString("url"))
-    )
-    val item = r.filter( i => i.id == "561667d23574e5fb1a8063a3")
-    item.first()
+  def getItemsByTitle(title: String, size: Integer, page: Integer) : Item = {
+    val query = sc.sql("SELECT * FROM price_probe WHERE url=" + title + ";").collect()
+    val item = query.map(row => Item(row.getAs[String]("item"), row.getAs[String]("pid"), row.getAs[String]("img"), row.getAs[String]("description"),
+      row.getAs[String]("title"), row.getAs[String]("category"), row.getAs[String]("url")
+    ))
+    item(0)
   }
 
 }
