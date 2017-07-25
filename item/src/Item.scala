@@ -12,8 +12,10 @@ object RequestHandler {
 }
 
 case class Item(id: String, pid: String, title: String, description : String, category: String, url : String, img : String)
-case object GetItemRequest
-case class SetStatusRequest(item: Item)
+case object GetItemsRequest
+case object GetItemByPidRequest
+case object GetItemByUrlRequest
+case object GetItemByTitleRequest
 case class ItemResponse(item: Item)
 
 class RequestHandler extends Actor with ActorLogging {
@@ -23,14 +25,17 @@ class RequestHandler extends Actor with ActorLogging {
   var itemFactory : ItemFactory = new ItemFactory
 
   def receive: Receive = {
-
-    case GetItemRequest =>
-      r = itemFactory.getItemById
+    case GetItemsRequest =>
+      r = itemFactory.getItems
       sender() !  ItemResponse(r)
-    case request: SetStatusRequest =>
-      log.debug("Updating Status to {}",request.item)
-      r = request.item
-      sender() ! ItemResponse(r)
+    case GetItemByTitleRequest =>
+      r = itemFactory.getItemsByTitle
+      sender() !  ItemResponse(r)case GetItemByPidRequest =>
+      r = itemFactory.getItemByPid
+      sender() !  ItemResponse(r)
+    case GetItemByUrlRequest =>
+      r = itemFactory.getItemByUrl
+      sender() !  ItemResponse(r)
   }
 
   @Override

@@ -12,32 +12,53 @@ import priceprobe.server.Server
 /**
   * Created by andream16 on 20.06.17.
   */
+
+case class itemEndPointException(err: String)  extends Exception(err)
+
 class ItemEndpoint extends ItemJsonSupport {
 
     var res : Item = _
 
-    //Define the route
     val route: Route = {
 
       implicit val timeout = Timeout(20.seconds)
 
       path("item") {
         get {
-          parameters("key".?, "value".?) {
-            (key, value) => (key, value) match {
-              case (Some(k), Some(v)) => println("Ok")
-              case (Some(k), None) => println("No Value found")
-              case (None, Some(k)) => println("No Key found")
-              case (None, None) => println("Nil")
-            }
-            onSuccess(Server.requestHandler ? GetItemRequest) {
-             case response: ItemResponse =>
-               complete(response.item)
-             case _ =>
-               complete(StatusCodes.InternalServerError)
+          parameters("key".?, "value".?, "size".?, "page".?) {
+            (key, value, size, page) => (key, value, size, page) match {
+              case (Some(k), Some(v), _, _) => (k, v) match {
+                case ("pid", _) => onSuccess(Server.requestHandler ? GetItemByPidRequest) {
+                  case response: ItemResponse =>
+                    complete(response.item)
+                  case _ =>
+                    complete(StatusCodes.InternalServerError)
+                }
+                case ("url", _) => onSuccess(Server.requestHandler ? GetItemByUrlRequest) {
+                  case response: ItemResponse =>
+                    complete(response.item)
+                  case _ =>
+                    complete(StatusCodes.InternalServerError)
+                }
+                case (_, _) => complete(StatusCodes.InternalServerError)
+              }
+              case (Some(k), Some(v), Some(s), Some(p)) => (k, v, s, p) match {
+                case ("title", _, _, _) => onSuccess(Server.requestHandler ? GetItemByTitleRequest) {
+                  case response: ItemResponse =>
+                    complete(response.item)
+                  case _ =>
+                    complete(StatusCodes.InternalServerError)
+                }
+                case (_, _, _, _) => onSuccess(Server.requestHandler ? GetItemsRequest) {
+                  case response: ItemResponse =>
+                    complete(response.item)
+                  case _ =>
+                    complete(StatusCodes.InternalServerError)
+                }
+              }
+              case (_, _, _, _) => complete(StatusCodes.BadRequest)
             }
           }
-
         }
       }
 
