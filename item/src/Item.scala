@@ -1,6 +1,7 @@
 package priceprobe.item
 
 import akka.actor.{Actor, ActorLogging, Props}
+import priceprobe.connection.SparkConnectionFactory
 
 /**
   * Created by andream16 on 20.06.17.
@@ -22,8 +23,10 @@ class RequestHandler extends Actor with ActorLogging {
 
   var r : Item = _
   var items : Items = _
-
-  var itemFactory : ItemFactory = new ItemFactory
+  val sparkConnectionFactory = new SparkConnectionFactory
+  val connection = sparkConnectionFactory.initSparkConnection()
+  val sc= sparkConnectionFactory.getSparkInstance
+  var itemFactory : ItemFactory = new ItemFactory()(sc)
 
   def receive: Receive = {
     case GetItemsRequest(size: Integer, page: Integer) =>
