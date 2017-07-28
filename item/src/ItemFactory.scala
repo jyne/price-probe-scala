@@ -1,7 +1,7 @@
 package priceprobe.item
 
 import priceprobe.connection.SparkConnectionFactory
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SparkSession}
 
 /**
   * Created by andream16 on 20.07.17.
@@ -23,12 +23,20 @@ class ItemFactory {
   sc.sql(createDDL)
   import sc.implicits._
 
-  def getItems(size: Integer, page: Integer) : Item = {
-    val query = sc.sql("SELECT * FROM price_probe WHERE url=" + size + ";").collect()
-    val item = query.map(row => Item(row.getAs[String]("item"), row.getAs[String]("pid"), row.getAs[String]("img"), row.getAs[String]("description"),
-      row.getAs[String]("title"), row.getAs[String]("category"), row.getAs[String]("url")
-    ))
-    item(0)
+  def rowToItem(row: Row): Item = {
+    Item(Option(row.getAs[String]("item")).getOrElse(""),
+      Option(row.getAs[String]("pid")).getOrElse(""),
+      Option(row.getAs[String]("img")).getOrElse(""),
+      Option(row.getAs[String]("description")).getOrElse(""),
+      Option(row.getAs[String]("title")).getOrElse(""),
+      Option(row.getAs[String]("category")).getOrElse(""),
+      Option(row.getAs[String]("url")).getOrElse("")
+    )
+  }
+
+  def getItems(size: Integer, page: Integer) : Items = {
+    val query = sc.sql("SELECT * FROM price_probe")
+    Items(query.map(row => rowToItem(row)).collect().toList)
   }
 
   def getItemByPid(pid : String) : Item = {

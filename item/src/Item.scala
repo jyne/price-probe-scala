@@ -12,31 +12,32 @@ object RequestHandler {
 }
 
 case class Item(id: String, pid: String, title: String, description : String, category: String, url : String, img : String)
+case class Items(items: List[Item])
 case class GetItemsRequest(size: Integer, page: Integer)
 case class GetItemByPidRequest(pid: String)
 case class GetItemByUrlRequest(url: String)
 case class GetItemByTitleRequest(title: String, size: Integer, page: Integer)
-case class ItemResponse(item: Item)
 
 class RequestHandler extends Actor with ActorLogging {
 
   var r : Item = _
+  var items : Items = _
 
   var itemFactory : ItemFactory = new ItemFactory
 
   def receive: Receive = {
     case GetItemsRequest(size: Integer, page: Integer) =>
-      r = itemFactory.getItems(size, page)
-      sender() !  ItemResponse(r)
+      items = itemFactory.getItems(size, page)
+      sender() !  items
     case GetItemByTitleRequest(title: String, size: Integer, page: Integer) =>
       r = itemFactory.getItemsByTitle(title, size, page)
-      sender() !  ItemResponse(r)
+      sender() !  r
     case GetItemByPidRequest(pid: String) =>
       r = itemFactory.getItemByPid(pid)
-      sender() !  ItemResponse(r)
+      sender() !  r
     case GetItemByUrlRequest(url: String) =>
       r = itemFactory.getItemByUrl(url)
-      sender() !  ItemResponse(r)
+      sender() !  r
   }
 
   @Override

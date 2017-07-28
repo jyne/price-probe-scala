@@ -6,10 +6,6 @@ import org.apache.spark.{SparkConf, SparkContext}
 /**
   * Created by andream16 on 18.07.17.
   */
-object SparkConnectionFactory {
-  val getSparkInstance : SparkContext = getSparkInstance
-}
-
 class SparkConnectionFactory {
 
   val remoteFactory = new RemoteConnectionFactory
