@@ -1,6 +1,7 @@
 package priceprobe.item
 
 import akka.actor.{Actor, ActorLogging, Props}
+import org.apache.spark.sql.SparkSession
 import priceprobe.connection.SparkConnectionFactory
 
 /**
@@ -24,8 +25,8 @@ class RequestHandler extends Actor with ActorLogging {
   var r : Item = _
   var items : Items = _
   val sparkConnectionFactory = new SparkConnectionFactory
-  val connection = sparkConnectionFactory.initSparkConnection()
-  val sc= sparkConnectionFactory.getSparkInstance
+  val connection : Unit = sparkConnectionFactory.initSparkConnection()
+  val sc : SparkSession = sparkConnectionFactory.getSparkInstance
   var itemFactory : ItemFactory = new ItemFactory()(sc)
 
   def receive: Receive = {

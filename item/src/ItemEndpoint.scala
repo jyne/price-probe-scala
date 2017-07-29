@@ -52,7 +52,6 @@ class ItemEndpoint extends ItemJsonSupport {
                   }
                 }
                 case (_, _, Some(s), Some(p)) => (s, p) match {
-
                   case (_, _) => onSuccess(Server.requestHandler ? GetItemsRequest(s.toInt, p.toInt)) {
                     case response: Items =>
                       complete(response)
