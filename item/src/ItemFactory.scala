@@ -7,6 +7,8 @@ import org.apache.spark.sql.{Row, SparkSession}
   */
 class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
 
+  import sc.implicits._
+
   val createDDL = """CREATE TEMPORARY VIEW price_probe
      USING org.apache.spark.sql.cassandra
      OPTIONS (
@@ -16,11 +18,9 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
   if(sc.catalog.tableExists("price_probe")){
     sc.catalog.dropTempView("price_probe")
     sc.sql(createDDL)
-  }
-  else {
+  } else {
     sc.sql(createDDL)
   }
-  import sc.implicits._
 
   def rowToItem()(row: Row): Item = {
     Item(Option(row.getAs[String]("item")).getOrElse(""),
