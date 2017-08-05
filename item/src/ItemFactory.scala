@@ -34,6 +34,11 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
       Option(row.getAs[String]("url")).getOrElse(""))
   }
 
+  def dateTimeStringToList(dateTime: String): List[Int] = {
+    var d = new DateTime(dateTime)
+    List(d.getYear, d.getMonthOfYear, d.getDayOfMonth)
+  }
+
   def getItems(size: Integer, page: Integer) : Items = {
     /*val query = sc.sql("SELECT * FROM price_probe")
     val dt = query.map(row => rowToItem()(row))
@@ -44,9 +49,9 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
   }
 
   def getItemByPid(pid : String) : Prices = {
-    val price1 = Price("1", 2.00, 2.10, new DateTime("2012-08-16T07:22:05Z"))
-    val price2 = Price("1", 3.00, 4.10, new DateTime("2012-09-16T07:22:05Z"))
-    val price3 = Price("1", 5.00, 7.10, new DateTime("2012-10-16T07:22:05Z"))
+    val price1 = Price("1", 2.00, 2.10, dateTimeStringToList("2012-08-16T07:22:05Z"))
+    val price2 = Price("1", 3.00, 4.10, dateTimeStringToList("2012-09-16T07:22:05Z"))
+    val price3 = Price("1", 5.00, 7.10, dateTimeStringToList("2012-10-16T07:22:05Z"))
     Prices(List(price1, price2, price3))
     /*val query = sc.sql("SELECT * FROM price_probe WHERE pid=\"" + pid + "\"")
     query.map(row => rowToItem()(row)).first()*/

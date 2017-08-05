@@ -3,7 +3,6 @@ package priceprobe.item
 import akka.actor.{Actor, ActorLogging, Props}
 import org.apache.spark.sql.SparkSession
 import priceprobe.connection.SparkConnectionFactory
-import priceprobe.price
 import priceprobe.price.Prices
 
 /**
@@ -41,7 +40,7 @@ class RequestHandler extends Actor with ActorLogging {
       sender() !  r
     case GetItemByPidRequest(pid: String) =>
       prices = itemFactory.getItemByPid(pid)
-      sender() !  r
+      sender() !  prices
     case GetItemByUrlRequest(url: String) =>
       r = itemFactory.getItemByUrl(url)
       sender() !  r
