@@ -7,7 +7,10 @@ import akka.util.Timeout
 
 import scala.concurrent.duration._
 import akka.pattern.ask
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import priceprobe.server.Server
+import priceprobe.price.Prices
+
 
 /**
   * Created by andream16 on 20.06.17.
@@ -19,7 +22,7 @@ class ItemEndpoint extends ItemJsonSupport {
 
     var res : Item = _
 
-    val route: Route = {
+    val route: Route = cors() {
 
       implicit val timeout = Timeout(20.seconds)
 
@@ -30,7 +33,7 @@ class ItemEndpoint extends ItemJsonSupport {
               (key, value, size, page) match {
                 case (Some(k), Some(v), _, _) => (k, v) match {
                   case ("pid", _) => onSuccess(Server.requestHandler ? GetItemByPidRequest(v)) {
-                    case response: Item =>
+                    case response: Prices =>
                       complete(response)
                     case _ =>
                       complete(StatusCodes.InternalServerError)

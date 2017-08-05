@@ -31,7 +31,7 @@ object Server {
     val host = remoteConnectionFactory.host
     val port = remoteConnectionFactory.port
 
-    remoteConnectionFactory.initRemoteConnection()
+    //remoteConnectionFactory.initRemoteConnection()
 
     //Startup, and listen for requests
     val bindingFuture = Http().bindAndHandle(MainRouter.routes, host, port)

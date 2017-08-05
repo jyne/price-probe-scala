@@ -3,6 +3,8 @@ package priceprobe.item
 import akka.actor.{Actor, ActorLogging, Props}
 import org.apache.spark.sql.SparkSession
 import priceprobe.connection.SparkConnectionFactory
+import priceprobe.price
+import priceprobe.price.Prices
 
 /**
   * Created by andream16 on 20.06.17.
@@ -13,7 +15,7 @@ object RequestHandler {
   }
 }
 
-case class Item(id: String, pid: String, title: String, description : String, category: String, url : String, img : String)
+case class Item(id: String, category: String, description : String, img : String, pid: String, title: String , url : String)
 case class Items(items: List[Item])
 case class GetItemsRequest(size: Integer, page: Integer)
 case class GetItemByPidRequest(pid: String)
@@ -24,6 +26,7 @@ class RequestHandler extends Actor with ActorLogging {
 
   var r : Item = _
   var items : Items = _
+  var prices : Prices = _
   val sparkConnectionFactory = new SparkConnectionFactory
   val connection : Unit = sparkConnectionFactory.initSparkConnection()
   val sc : SparkSession = sparkConnectionFactory.getSparkInstance
@@ -37,7 +40,7 @@ class RequestHandler extends Actor with ActorLogging {
       r = itemFactory.getItemsByTitle(title, size, page)
       sender() !  r
     case GetItemByPidRequest(pid: String) =>
-      r = itemFactory.getItemByPid(pid)
+      prices = itemFactory.getItemByPid(pid)
       sender() !  r
     case GetItemByUrlRequest(url: String) =>
       r = itemFactory.getItemByUrl(url)
