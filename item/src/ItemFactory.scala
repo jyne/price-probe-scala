@@ -35,7 +35,7 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
   }
 
   def dateTimeStringToList(dateTime: String): List[Int] = {
-    var d = new DateTime(dateTime)
+    val d = new DateTime(dateTime)
     List(d.getYear, d.getMonthOfYear, d.getDayOfMonth)
   }
 
