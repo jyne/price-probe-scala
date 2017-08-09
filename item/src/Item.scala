@@ -1,16 +1,15 @@
 package priceprobe.item
 
 import akka.actor.{Actor, ActorLogging, Props}
-import org.apache.spark.sql.SparkSession
-import priceprobe.connection.SparkConnectionFactory
-import priceprobe.price.Prices
+
+import priceprobe.server.Server
 
 /**
   * Created by andream16 on 20.06.17.
   */
-object RequestHandler {
+object ItemRequestHandler {
   def props(): Props = {
-    Props(classOf[RequestHandler])
+    Props(classOf[ItemRequestHandler])
   }
 }
 
@@ -21,34 +20,26 @@ case class GetItemByPidRequest(pid: String)
 case class GetItemByUrlRequest(url: String)
 case class GetItemByTitleRequest(title: String, size: Integer, page: Integer)
 
-class RequestHandler extends Actor with ActorLogging {
+class ItemRequestHandler extends Actor with ActorLogging {
 
-  var r : Item = _
+  val itemFactory: ItemFactory = new ItemFactory()(Server.sc)
+
+  var item : Item = _
   var items : Items = _
-  var prices : Prices = _
-  val sparkConnectionFactory = new SparkConnectionFactory
-  val connection : Unit = sparkConnectionFactory.initSparkConnection()
-  val sc : SparkSession = sparkConnectionFactory.getSparkInstance
-  var itemFactory : ItemFactory = new ItemFactory()(sc)
 
   def receive: Receive = {
     case GetItemsRequest(size: Integer, page: Integer) =>
       items = itemFactory.getItems(size, page)
       sender() !  items
     case GetItemByTitleRequest(title: String, size: Integer, page: Integer) =>
-      r = itemFactory.getItemsByTitle(title, size, page)
-      sender() !  r
+      item = itemFactory.getItemsByTitle(title, size, page)
+      sender() !  item
     case GetItemByPidRequest(pid: String) =>
-      prices = itemFactory.getItemByPid(pid)
-      sender() !  prices
+      item = itemFactory.getItemByPid(pid)
+      sender() !  item
     case GetItemByUrlRequest(url: String) =>
-      r = itemFactory.getItemByUrl(url)
-      sender() !  r
-  }
-
-  @Override
-  def toString(item : Item): String ={
-    item.id + " " + item.title + " " + item.pid + " " + item.category + " " + item.description + " " + item.url + " " + item.img
+      item = itemFactory.getItemByUrl(url)
+      sender() !  item
   }
 
 }
