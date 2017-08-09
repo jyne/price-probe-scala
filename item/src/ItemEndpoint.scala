@@ -28,6 +28,12 @@ object ItemEndpoint extends ItemJsonSupport {
             (key, value, size, page) =>
               (key, value, size, page) match {
                 case (Some(k), Some(v), _, _) => (k, v) match {
+                  case ("item", _) => onSuccess(Server.itemRequestHandler ? GetItemByIdRequest(v)) {
+                    case response: Item =>
+                      complete(response)
+                    case _ =>
+                      complete(StatusCodes.InternalServerError)
+                  }
                   case ("pid", _) => onSuccess(Server.itemRequestHandler ? GetItemByPidRequest(v)) {
                     case response: Item =>
                       complete(response)

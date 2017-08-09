@@ -16,6 +16,7 @@ object ItemRequestHandler {
 case class Item(id: String, category: String, description : String, img : String, pid: String, title: String , url : String)
 case class Items(items: List[Item])
 case class GetItemsRequest(size: Integer, page: Integer)
+case class GetItemByIdRequest(id: String)
 case class GetItemByPidRequest(pid: String)
 case class GetItemByUrlRequest(url: String)
 case class GetItemByTitleRequest(title: String, size: Integer, page: Integer)
@@ -39,6 +40,9 @@ class ItemRequestHandler extends Actor with ActorLogging {
       sender() !  item
     case GetItemByUrlRequest(url: String) =>
       item = itemFactory.getItemByUrl(url)
+      sender() !  item
+    case GetItemByIdRequest(id: String) =>
+      item = itemFactory.getItemById(id)
       sender() !  item
   }
 

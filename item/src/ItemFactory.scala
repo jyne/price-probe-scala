@@ -61,6 +61,11 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
     query.map(row => rowToItem()(row)).first()
   }
 
+  def getItemById(id: String) : Item = {
+    val query = sc.sql("SELECT * FROM price_probe_items WHERE item=\"" + id + "\"")
+    query.map(row => rowToItem()(row)).first()
+  }
+
   def getItemsByTitle(title: String, size: Integer, page: Integer) : Item = {
     val query = sc.sql("SELECT * FROM price_probe_items WHERE title=\"" + title + "\"")
     query.map(row => rowToItem()(row)).first()
