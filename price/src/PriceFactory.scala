@@ -1,15 +1,17 @@
 package priceprobe.price
 
 import java.sql.Timestamp
-import java.time.{Instant, LocalDate, ZoneId, ZoneOffset}
+import java.time.{Instant, ZoneOffset}
 
 import collection.JavaConverters._
 import scala.collection.JavaConversions._
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 class PriceFactory ()(implicit  sc : SparkSession) extends Serializable {
 
   import sc.implicits._
+
+  var dt: Dataset[Price] = _
 
   val createDDL =
     """CREATE TEMPORARY VIEW price_probe_prices
@@ -20,9 +22,9 @@ class PriceFactory ()(implicit  sc : SparkSession) extends Serializable {
      pushdown "true")"""
   if (sc.catalog.tableExists("price_probe_prices")) {
     sc.catalog.dropTempView("price_probe_prices")
-    sc.sql(createDDL)
+    sc.sql(createDDL).queryExecution.withCachedData
   } else {
-    sc.sql(createDDL)
+    sc.sql(createDDL).queryExecution.withCachedData
   }
 
   def tuple6ToList[T](t: (T,T,T,T,T,T)): List[T] = List(t._1, t._2, t._3, t._4, t._5, t._6)
@@ -42,7 +44,11 @@ class PriceFactory ()(implicit  sc : SparkSession) extends Serializable {
 
   def getPricesById(item: String) : Prices = {
     val query = sc.sql("SELECT * FROM price_probe_prices WHERE item=\"" + item + "\" AND estimated > 0")
-    val dt = query.map(row => rowToPrice()(row))
+    try {
+      dt = query.map(row => rowToPrice()(row))
+    } catch {
+      case e: Exception => getPricesById(item)
+    }
     Prices(dt.collect().toList)
   }
 

@@ -1,6 +1,6 @@
 package priceprobe.item
 
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import org.joda.time.DateTime
 
 /**
@@ -10,6 +10,8 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
 
   import sc.implicits._
 
+  var dt: Dataset[Item] = _
+
   val createDDL = """CREATE TEMPORARY VIEW price_probe_items
      USING org.apache.spark.sql.cassandra
      OPTIONS (
@@ -18,9 +20,9 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
      pushdown "true")"""
   if(sc.catalog.tableExists("price_probe_items")){
     sc.catalog.dropTempView("price_probe_items")
-    sc.sql(createDDL)
+    sc.sql(createDDL).queryExecution.withCachedData
   } else {
-    sc.sql(createDDL)
+    sc.sql(createDDL).queryExecution.withCachedData
   }
 
   def rowToItem()(row: Row): Item = {
@@ -40,7 +42,11 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
 
   def getItems(size: Integer, page: Integer) : Items = {
     val query = sc.sql("SELECT * FROM price_probe_items LIMIT 16")
-    val dt = query.map(row => rowToItem()(row))
+    try {
+      dt = query.map(row => rowToItem()(row))
+    } catch {
+      case e: Exception => getItems(size, page)
+    }
     Items(dt.collect().toList)
   }
 
