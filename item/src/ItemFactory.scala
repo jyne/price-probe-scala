@@ -39,19 +39,12 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
   }
 
   def getItems(size: Integer, page: Integer) : Items = {
-    val query = sc.sql("SELECT * FROM price_probe_items")
+    val query = sc.sql("SELECT * FROM price_probe_items LIMIT 16")
     val dt = query.map(row => rowToItem()(row))
     Items(dt.collect().toList)
-    /*val item = List(Item("1", "tennis", "just a test", "miao", "sborra", "lul", "www.goooooogle.com"))
-    val items = Items(item)
-    items*/
   }
 
   def getItemByPid(pid : String) : Item = {
-    /*val price1 = Price("1", 2.00, 2.10, dateTimeStringToList("2012-08-16T07:22:05Z"))
-    val price2 = Price("1", 3.00, 4.10, dateTimeStringToList("2012-09-16T07:22:05Z"))
-    val price3 = Price("1", 5.00, 7.10, dateTimeStringToList("2012-10-16T07:22:05Z"))
-    Prices(List(price1, price2, price3))*/
     val query = sc.sql("SELECT * FROM price_probe_items WHERE pid=\"" + pid + "\"")
     query.map(row => rowToItem()(row)).first()
   }
@@ -67,7 +60,7 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
   }
 
   def getItemsByTitle(title: String, size: Integer, page: Integer) : Item = {
-    val query = sc.sql("SELECT * FROM price_probe_items WHERE title=\"" + title + "\"")
+    val query = sc.sql("SELECT * FROM price_probe_items WHERE title=\"" + title + "\" LIMIT 16")
     query.map(row => rowToItem()(row)).first()
   }
 

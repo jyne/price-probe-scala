@@ -8,6 +8,8 @@ import priceprobe.item._
 import priceprobe.connection.{RemoteConnectionFactory, SparkConnectionFactory}
 import priceprobe.price.{PriceEndpoint, PriceRequestHandler}
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
+
 import _root_.scala.io.StdIn
 import scala.concurrent.ExecutionContextExecutor
 
@@ -15,7 +17,7 @@ import scala.concurrent.ExecutionContextExecutor
   * Created by andream16 on 22.06.17.
   */
 object MainRouter {
-  val routes = ItemEndpoint.route ~ PriceEndpoint.route
+  val routes: Route = ItemEndpoint.route ~ PriceEndpoint.route
 }
 
 object Server {

@@ -6,7 +6,7 @@
 
     <properties>
         <encoding>UTF-8</encoding>
-        <scala.version>2.11.6</scala.version>
+        <scala.version>2.11.8</scala.version>
         <org.slf4j.version>1.7.25</org.slf4j.version>
     </properties>
 
