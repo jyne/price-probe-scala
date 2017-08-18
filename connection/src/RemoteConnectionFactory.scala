@@ -17,7 +17,9 @@ class RemoteConnectionFactory {
   val sshUrl: String = getConf("credentials", "ssh-url")
   val sshPort: Int = getConf("credentials", "ssh-port").toInt
   val cassandraPort: Int = getConf("credentials", "cassandra-port").toInt
-  val forwardPort: Int = getConf("credentials", "forward-port").toInt
+  val cassandraForwardPort: Int = getConf("credentials", "cassandra-forward-port").toInt
+  val sparkPort: Int = getConf("credentials", "spark-port").toInt
+  val sparkForwardPort: Int = getConf("credentials", "spark-forward-port").toInt
   val sshUserName: String = getConf("credentials", "user-name")
   val sshPemPath: String = getConf("credentials", "pem-path")
   val sshTimeout : Int = getConf("credentials", "timeout").toInt
@@ -39,7 +41,8 @@ class RemoteConnectionFactory {
     //Prepare Execution
     channel = session.openChannel("exec").asInstanceOf[ChannelExec]
     channel.connect()
-    session.setPortForwardingL(forwardPort, host, cassandraPort)
+    session.setPortForwardingL(sparkForwardPort, host, sparkPort)
+    session.setPortForwardingL(cassandraForwardPort, host, cassandraPort)
 
   }
 

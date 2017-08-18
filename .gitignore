@@ -4,3 +4,5 @@
 /target/
 /metastore_db/
 /derby.log
+/project/target/
+/project/project/

@@ -43,13 +43,17 @@ class PriceFactory ()(implicit  sc : SparkSession) extends Serializable {
   }
 
   def getPricesById(item: String) : Prices = {
-    val query = sc.sql("SELECT * FROM price_probe_prices WHERE item=\"" + item + "\" AND estimated > 0")
+    val query = sc.sqlContext.sql("SELECT * FROM price_probe_prices WHERE item=\"" + item + "\" AND estimated > 0")
     try {
       dt = query.map(row => rowToPrice()(row))
+      try {
+        Prices(dt.collect().toList)
+      } catch {
+        case e: Exception => getPricesById(item)
+      }
     } catch {
       case e: Exception => getPricesById(item)
     }
-    Prices(dt.collect().toList)
   }
 
 }

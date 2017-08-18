@@ -41,32 +41,36 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
   }
 
   def getItems(size: Integer, page: Integer) : Items = {
-    val query = sc.sql("SELECT * FROM price_probe_items LIMIT 16")
+    val query = sc.sqlContext.sql("SELECT * FROM price_probe_items LIMIT 16")
     try {
       dt = query.map(row => rowToItem()(row))
+      try {
+        Items(dt.collect().toList)
+      } catch {
+        case e: Exception => getItems(size, page)
+      }
     } catch {
       case e: Exception => getItems(size, page)
     }
-    Items(dt.collect().toList)
   }
 
   def getItemByPid(pid : String) : Item = {
-    val query = sc.sql("SELECT * FROM price_probe_items WHERE pid=\"" + pid + "\"")
+    val query = sc.sqlContext.sql("SELECT * FROM price_probe_items WHERE pid=\"" + pid + "\"")
     query.map(row => rowToItem()(row)).first()
   }
 
   def getItemByUrl(url: String) : Item = {
-    val query = sc.sql("SELECT * FROM price_probe_items WHERE url=\"" + url + "\"")
+    val query = sc.sqlContext.sql("SELECT * FROM price_probe_items WHERE url=\"" + url + "\"")
     query.map(row => rowToItem()(row)).first()
   }
 
   def getItemById(id: String) : Item = {
-    val query = sc.sql("SELECT * FROM price_probe_items WHERE item=\"" + id + "\"")
+    val query = sc.sqlContext.sql("SELECT * FROM price_probe_items WHERE item=\"" + id + "\"")
     query.map(row => rowToItem()(row)).first()
   }
 
   def getItemsByTitle(title: String, size: Integer, page: Integer) : Item = {
-    val query = sc.sql("SELECT * FROM price_probe_items WHERE title=\"" + title + "\" LIMIT 16")
+    val query = sc.sqlContext.sql("SELECT * FROM price_probe_items WHERE title=\"" + title + "\" LIMIT 16")
     query.map(row => rowToItem()(row)).first()
   }
 
