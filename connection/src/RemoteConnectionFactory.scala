@@ -41,7 +41,7 @@ class RemoteConnectionFactory {
     //Prepare Execution
     channel = session.openChannel("exec").asInstanceOf[ChannelExec]
     channel.connect()
-    session.setPortForwardingL(sparkForwardPort, host, sparkPort)
+    //session.setPortForwardingL(sparkForwardPort, host, sparkPort)
     session.setPortForwardingL(cassandraForwardPort, host, cassandraPort)
 
   }

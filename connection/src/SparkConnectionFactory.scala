@@ -14,7 +14,8 @@ class SparkConnectionFactory {
   def initSparkConnection() : Unit = {
     val configuration = new SparkConf(true)
                         .setAppName("price-probe")
-                        .setMaster("spark://" + remoteFactory.host + ":" + remoteFactory.sparkForwardPort)
+                          .setMaster("local[8]")
+                        //.setMaster("spark://" + remoteFactory.host + ":" + remoteFactory.sparkForwardPort)
                         .set("spark.cassandra.connection.host", remoteFactory.host)
                         .set("spark.cassandra.connection.port", remoteFactory.cassandraForwardPort.toString)
                         .set("spark.cassandra.input.consistency.level","ONE")
