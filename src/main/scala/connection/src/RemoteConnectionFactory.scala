@@ -9,20 +9,30 @@ import com.typesafe.config.{Config, ConfigFactory}
   * Created by andream16 on 27.06.17.
   */
 class RemoteConnectionFactory {
-  val configFile = new File("./config/application.conf")
+  // Configuration
+  val configFile = new File("/home/andream16/Documents/devStuff/price-probe-scala/src/main/scala/config/application.conf")
   val fileConfig: Config = ConfigFactory.parseFile(configFile)
   val config: Config = ConfigFactory.load(fileConfig)
-  val host: String = getConf("server", "api")
+
+  // Server
+  val host: String = getConf("server", "url")
   val port: Int = getConf("server", "port").toInt
-  val sshUrl: String = getConf("credentials", "ssh-url")
-  val sshPort: Int = getConf("credentials", "ssh-port").toInt
-  val cassandraPort: Int = getConf("credentials", "cassandra-port").toInt
-  val cassandraForwardPort: Int = getConf("credentials", "cassandra-forward-port").toInt
-  val sparkPort: Int = getConf("credentials", "spark-port").toInt
-  val sparkForwardPort: Int = getConf("credentials", "spark-forward-port").toInt
-  val sshUserName: String = getConf("credentials", "user-name")
-  val sshPemPath: String = getConf("credentials", "pem-path")
-  val sshTimeout : Int = getConf("credentials", "timeout").toInt
+
+  // Ssh
+  val sshUrl: String = getConf("ssh-credentials", "url")
+  val sshPort: Int = getConf("ssh-credentials", "port").toInt
+  val sshUserName: String = getConf("ssh-credentials", "username")
+  val sshPassword: String = getConf("ssh-credentials", "password")
+  val sshPemPath: String = getConf("ssh-credentials", "pem-path")
+  val sshTimeout : Int = getConf("ssh-credentials", "timeout").toInt
+
+  // Spark
+  val cassandraSubnet: String = getConf("spark", "cassandra-subnet")
+  val cassandraPort: Int = getConf("spark", "cassandra-port").toInt
+  val cassandraForwardPort: Int = getConf("spark", "cassandra-forward-port").toInt
+  val sparkSubnet: String = getConf("spark", "spark-subnet")
+  val sparkPort: Int = getConf("spark", "spark-port").toInt
+  val sparkForwardPort: Int = getConf("spark", "spark-forward-port").toInt
 
   var session : Session = _
   var channel : ChannelExec = _
@@ -30,8 +40,9 @@ class RemoteConnectionFactory {
   def initRemoteConnection(): Unit = {
     //Connect remotely via SSH
     val jsch: JSch = new JSch()
-    jsch.addIdentity(sshPemPath)
-    session = jsch.getSession(sshUserName, sshUrl, sshPort)
+    //jsch.addIdentity(sshPemPath)
+    session = jsch.getSession(sshUserName, sshUrl, cassandraPort)
+    session.setPassword(sshPassword)
     val config = new Properties()
     config.put("StrictHostKeyChecking", "no")
     session.setTimeout(sshTimeout)
@@ -41,8 +52,9 @@ class RemoteConnectionFactory {
     //Prepare Execution
     channel = session.openChannel("exec").asInstanceOf[ChannelExec]
     channel.connect()
-    //session.setPortForwardingL(sparkForwardPort, host, sparkPort)
-    session.setPortForwardingL(cassandraForwardPort, host, cassandraPort)
+
+    session.setPortForwardingR(sparkPort, sparkSubnet, sparkPort)
+    session.setPortForwardingR(cassandraPort, cassandraSubnet, cassandraPort)
 
   }
 

@@ -10,6 +10,7 @@ import priceprobe.price.{PriceEndpoint, PriceRequestHandler}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import org.apache.log4j.PropertyConfigurator
+
 import _root_.scala.io.StdIn
 import scala.concurrent.ExecutionContextExecutor
 
@@ -27,19 +28,18 @@ object Server {
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit var itemRequestHandler: ActorRef = _
   implicit var priceRequestHandler: ActorRef = _
+  implicit var remoteConnectionFactory: RemoteConnectionFactory = _
   implicit var sc: SparkSession = _
 
-  def main(args: Array[String]): Unit = {
-
+  def connect(): Unit = {
 
     val log4jConfPath = "/home/andream16/Documents/devStuff/price-probe-scala/resources/log4j.properties"
     PropertyConfigurator.configure(log4jConfPath)
 
-    val remoteConnectionFactory = new RemoteConnectionFactory
+    remoteConnectionFactory = new RemoteConnectionFactory
+
     val host = remoteConnectionFactory.host
     val port = remoteConnectionFactory.port
-
-    remoteConnectionFactory.initRemoteConnection()
 
     val sparkConnectionFactory = new SparkConnectionFactory
     sparkConnectionFactory.initSparkConnection()

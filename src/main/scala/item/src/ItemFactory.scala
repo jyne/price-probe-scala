@@ -42,16 +42,8 @@ class ItemFactory ()(implicit  sc : SparkSession) extends Serializable {
 
   def getItems(size: Integer, page: Integer) : Items = {
     val query = sc.sqlContext.sql("SELECT * FROM price_probe_items LIMIT 16")
-    try {
-      dt = query.map(row => rowToItem()(row))
-      try {
-        Items(dt.collect().toList)
-      } catch {
-        case e: Exception => getItems(size, page)
-      }
-    } catch {
-      case e: Exception => getItems(size, page)
-    }
+    dt = query.map(row => rowToItem()(row))
+    Items(dt.collect().toList)
   }
 
   def getItemByPid(pid : String) : Item = {
