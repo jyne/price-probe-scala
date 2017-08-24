@@ -33,7 +33,7 @@ object Server {
 
   def connect(): Unit = {
 
-    val log4jConfPath = "/home/andream16/Documents/devStuff/price-probe-scala/resources/log4j.properties"
+    val log4jConfPath = "resources/log4j.properties"
     PropertyConfigurator.configure(log4jConfPath)
 
     remoteConnectionFactory = new RemoteConnectionFactory

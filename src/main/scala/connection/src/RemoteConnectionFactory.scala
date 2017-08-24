@@ -9,14 +9,16 @@ import com.typesafe.config.{Config, ConfigFactory}
   * Created by andream16 on 27.06.17.
   */
 class RemoteConnectionFactory {
+
   // Configuration
-  val configFile = new File("/home/andream16/Documents/devStuff/price-probe-scala/src/main/scala/config/application.conf")
+  val configFile = new File(getClass.getClassLoader.getResource("application.conf").getPath)
   val fileConfig: Config = ConfigFactory.parseFile(configFile)
   val config: Config = ConfigFactory.load(fileConfig)
 
   // Server
   val host: String = getConf("server", "url")
   val port: Int = getConf("server", "port").toInt
+  val remoteHost: String = getConf("server", "remote-host")
 
   // Ssh
   val sshUrl: String = getConf("ssh-credentials", "url")

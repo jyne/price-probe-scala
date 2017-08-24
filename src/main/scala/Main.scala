@@ -7,8 +7,8 @@ object Main extends App {
 
   override def main(args: Array[String]): Unit = {
 
-    remoteConnectionFactory = new RemoteConnectionFactory
-    remoteConnectionFactory.initRemoteConnection()
+    //remoteConnectionFactory = new RemoteConnectionFactory
+    //remoteConnectionFactory.initRemoteConnection()
     Server.connect
 
   }
