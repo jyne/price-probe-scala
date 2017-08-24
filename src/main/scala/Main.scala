@@ -1,5 +1,5 @@
-import priceprobe.server.Server
 import priceprobe.connection.RemoteConnectionFactory
+import priceprobe.server.Server
 
 object Main extends App {
 

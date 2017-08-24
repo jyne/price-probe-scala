@@ -1,6 +1,5 @@
 package priceprobe.connection
 
-import java.io.File
 import java.util.Properties
 import com.jcraft.jsch.{ChannelExec, JSch, Session}
 import com.typesafe.config.{Config, ConfigFactory}
@@ -11,9 +10,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 class RemoteConnectionFactory {
 
   // Configuration
-  val configFile = new File(getClass.getClassLoader.getResource("application.conf").getPath)
-  val fileConfig: Config = ConfigFactory.parseFile(configFile)
-  val config: Config = ConfigFactory.load(fileConfig)
+  val config: Config = ConfigFactory.load("application.conf")
 
   // Server
   val host: String = getConf("server", "url")

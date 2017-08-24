@@ -2,7 +2,7 @@ name := "price-probe-scala"
 
 version := "1.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.6"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest_2.11
 libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.5" % "test"
@@ -36,5 +36,7 @@ libraryDependencies += "ch.megard" % "akka-http-cors_2.11" % "0.2.1"
 libraryDependencies += "stax" % "stax-api" % "1.0.1"
 // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
 libraryDependencies += "commons-beanutils" % "commons-beanutils" % "1.9.3"
+libraryDependencies += "com.typesafe" % "config" % "1.3.1"
+
 
 enablePlugins(JavaAppPackaging)

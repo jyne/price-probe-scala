@@ -15,6 +15,7 @@ object ItemRequestHandler {
 
 case class Item(id: String, category: String, description : String, img : String, pid: String, title: String , url : String)
 case class Items(items: List[Item])
+
 case class GetItemsRequest(size: Integer, page: Integer)
 case class GetItemByIdRequest(id: String)
 case class GetItemByPidRequest(pid: String)
