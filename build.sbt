@@ -12,31 +12,22 @@ libraryDependencies += "com.typesafe.akka" % "akka-http_2.11" % "10.0.7"
 libraryDependencies += "com.typesafe.akka" % "akka-http-testkit_2.11" % "10.0.7" % "test"
 // https://mvnrepository.com/artifact/com.typesafe.akka/akka-http-spray-json-experimental_2.11
 libraryDependencies += "com.typesafe.akka" % "akka-http-spray-json-experimental_2.11" % "2.4.11.2"
-// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.25"
-// https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j
-libraryDependencies += "org.slf4j" % "jcl-over-slf4j" % "1.7.25"
-// https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
-libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.7.25" % "test"
-// https://mvnrepository.com/artifact/com.jcraft/jsch
-libraryDependencies += "com.jcraft" % "jsch" % "0.1.54"
-// https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.11
-libraryDependencies += "org.apache.spark" % "spark-core_2.11" % "2.1.1"
-// https://mvnrepository.com/artifact/com.datastax.spark/spark-cassandra-connector_2.11
-libraryDependencies += "com.datastax.spark" % "spark-cassandra-connector_2.11" % "2.0.3"
-// https://mvnrepository.com/artifact/org.apache.spark/spark-sql_2.11
-libraryDependencies += "org.apache.spark" % "spark-sql_2.11" % "2.1.1" % "provided"
-// https://mvnrepository.com/artifact/org.apache.spark/spark-hive_2.10
-libraryDependencies += "org.apache.spark" % "spark-hive_2.11" % "2.1.1"
-// https://mvnrepository.com/artifact/commons-codec/commons-codec
-libraryDependencies += "commons-codec" % "commons-codec" % "1.9"
 // https://mvnrepository.com/artifact/ch.megard/akka-http-cors_2.11
 libraryDependencies += "ch.megard" % "akka-http-cors_2.11" % "0.2.1"
-// https://mvnrepository.com/artifact/stax/stax-api
-libraryDependencies += "stax" % "stax-api" % "1.0.1"
+// https://mvnrepository.com/artifact/log4j/log4j
+libraryDependencies += "log4j" % "log4j" % "1.2.17"
+// https://mvnrepository.com/artifact/com.datastax.cassandra/cassandra-driver-core
+libraryDependencies += "com.datastax.cassandra" % "cassandra-driver-core" % "3.3.0"
+// https://mvnrepository.com/artifact/commons-codec/commons-codec
+libraryDependencies += "commons-codec" % "commons-codec" % "1.9"
 // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
 libraryDependencies += "commons-beanutils" % "commons-beanutils" % "1.9.3"
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
-
+// https://mvnrepository.com/artifact/io.monix/monix_2.11
+libraryDependencies += "io.monix" % "monix_2.11" % "3.0.0-22bf9c6"
+// https://mvnrepository.com/artifact/joda-time/joda-time
+libraryDependencies += "joda-time" % "joda-time" % "2.3"
+// https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.25"
 
 enablePlugins(JavaAppPackaging)
