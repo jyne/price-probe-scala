@@ -28,6 +28,9 @@ class SparkConnectionFactory {
       .getOrCreate()
 
     sparkContext = sparkSession
+
+
+    sparkContext.sparkContext.addJar("http://central.maven.org/maven2/com/datastax/spark/spark-cassandra-connector_2.11/2.0.3/spark-cassandra-connector_2.11-2.0.3.jar")
   }
 
   def getSparkInstance : SparkSession = {
